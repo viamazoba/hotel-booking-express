@@ -9,3 +9,145 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Hotel {
+  id             String @id @default(cuid())
+  hotel_name     String @unique
+  hotel_img      String
+  description    String
+  new_price      Int
+  previous_price Int?
+  phone          String
+  hotel_type     Stars
+  rooms          Room[]
+}
+
+model Room {
+  id             String           @id @default(cuid())
+  hotel          Hotel            @relation(fields: [hotelId], references: [id])
+  hotelId        String
+  room_name      String
+  room_img       String
+  new_price      Int
+  previous_price Int?
+  max_guests     Int
+  check_in       DateTime
+  check_out      DateTime
+  Inclusion_room Inclusion_room[]
+  Amenity_room   Amenity_room[]
+  Room_user      Room_user[]
+}
+
+model Inclusion_room {
+  id          String    @id @default(cuid())
+  room        Room      @relation(fields: [roomId], references: [id])
+  roomId      String
+  inclusion   Inclusion @relation(fields: [inclusionId], references: [id])
+  inclusionId String
+}
+
+model Inclusion {
+  id             String           @id @default(cuid())
+  inclusion_name String
+  Inclusion_room Inclusion_room[]
+}
+
+model Amenity_room {
+  id             String  @id @default(cuid())
+  inclusion_name String  @unique
+  room           Room    @relation(fields: [roomId], references: [id])
+  roomId         String
+  amenity        Amenity @relation(fields: [amenityId], references: [id])
+  amenityId      String
+}
+
+model Amenity {
+  id           String         @id @default(cuid())
+  amenity_name String
+  Amenity_room Amenity_room[]
+}
+
+model Room_user {
+  id     String @id @default(cuid())
+  room   Room   @relation(fields: [roomId], references: [id])
+  roomId String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model User {
+  id               String             @id @default(cuid())
+  user_name        String
+  user_img         String
+  email            String
+  phone            String
+  gender           Gender
+  birthday         String
+  address          String
+  Room_user        Room_user[]
+  role             Role               @relation(fields: [roleId], references: [id])
+  roleId           String
+  User_booked_room User_booked_room[]
+}
+
+model Role {
+  id        String @id @default(cuid())
+  role_name String
+  user      User[]
+}
+
+model User_booked_room {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model Booked_room {
+  id String @id @default(cuid())
+}
+
+// model Inclusion_room{
+
+// }
+
+// model User {
+//   id       String  @id @default(cuid())
+//   fullname String?
+//   address  String
+//   email    String  @unique
+//   phone    String
+//   // role     Role    @default(client)
+// }
+
+// model Product {
+//   id          String   @id @default(cuid())
+//   name        String
+//   description String
+//   price       Int
+//   stock       Int?
+//   reviews     Review[]
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+// }
+
+// model Review {
+//   id        String  @id @default(cuid())
+//   text      String
+//   rating    Int
+//   product   Product @relation(fields: [productId], references: [id])
+//   productId String
+// }
+
+enum Stars {
+  one
+  two
+  three
+  four
+  five
+}
+
+enum Gender {
+  Man
+  Woman
+  Other
+}
