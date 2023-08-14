@@ -11,15 +11,17 @@ datasource db {
 }
 
 model Hotel {
-  id             String @id @default(cuid())
-  hotel_name     String @unique
-  hotel_img      String
-  description    String
-  new_price      Int
-  previous_price Int?
-  phone          String
-  hotel_type     Stars
-  rooms          Room[]
+  id                   String                @id @default(cuid())
+  hotel_name           String                @unique
+  hotel_img            String
+  description          String
+  new_price            Int
+  previous_price       Int?
+  phone                String
+  hotel_type           Stars
+  rooms                Room[]
+  City_hotel           City_hotel[]
+  Service_labels_hotel Service_label_hotel[]
 }
 
 model Room {
@@ -30,12 +32,14 @@ model Room {
   room_img       String
   new_price      Int
   previous_price Int?
-  max_guests     Int
+  max_guests     Int?
   check_in       DateTime
   check_out      DateTime
   Inclusion_room Inclusion_room[]
   Amenity_room   Amenity_room[]
-  Room_user      Room_user[]
+  // Room_user      Room_user[]
+  user           User?            @relation(fields: [userId], references: [id])
+  userId         String?
 }
 
 model Inclusion_room {
@@ -67,27 +71,31 @@ model Amenity {
   Amenity_room Amenity_room[]
 }
 
-model Room_user {
-  id     String @id @default(cuid())
-  room   Room   @relation(fields: [roomId], references: [id])
-  roomId String
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-}
+// model Room_user {
+//   id     String @id @default(cuid())
+//   room   Room   @relation(fields: [roomId], references: [id])
+//   roomId String
+//   user   User   @relation(fields: [userId], references: [id])
+//   userId String
+// }
 
 model User {
-  id               String             @id @default(cuid())
-  user_name        String
-  user_img         String
-  email            String
-  phone            String
-  gender           Gender
-  birthday         String
-  address          String
-  Room_user        Room_user[]
-  role             Role               @relation(fields: [roleId], references: [id])
-  roleId           String
-  User_booked_room User_booked_room[]
+  id          String        @id @default(cuid())
+  user_name   String
+  user_img    String
+  email       String        @unique
+  phone       String
+  gender      Gender
+  birthday    String
+  address     String
+  Room        Room[]
+  // Room_user   Room_user[]
+  role        Role          @relation(fields: [roleId], references: [id])
+  roleId      String
+  Booked_room Booked_room[]
+  city        City          @relation(fields: [cityId], references: [id])
+  cityId      String
+  roomId      String
 }
 
 model Role {
@@ -96,47 +104,58 @@ model Role {
   user      User[]
 }
 
-model User_booked_room {
-  id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-}
-
 model Booked_room {
-  id String @id @default(cuid())
+  id             String   @id @default(cuid())
+  room_name      String
+  room_img       String
+  guests         Int
+  new_price      Int
+  previous_price Int?
+  check_in       DateTime
+  check_out      DateTime
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
 }
 
-// model Inclusion_room{
+model City_hotel {
+  id      String @id @default(cuid())
+  hotel   Hotel  @relation(fields: [hotelId], references: [id])
+  hotelId String
+  city    City   @relation(fields: [cityId], references: [id])
+  cityId  String
+}
 
-// }
+model City {
+  id          String       @id @default(cuid())
+  name_city   String
+  postal_code String       @unique
+  altitude    Float
+  latitude    Float
+  City_hotel  City_hotel[]
+  country     Country      @relation(fields: [countryId], references: [id])
+  countryId   String
+  User        User[]
+}
 
-// model User {
-//   id       String  @id @default(cuid())
-//   fullname String?
-//   address  String
-//   email    String  @unique
-//   phone    String
-//   // role     Role    @default(client)
-// }
+model Country {
+  id           String @id @default(cuid())
+  country_name String
+  City         City[]
+}
 
-// model Product {
-//   id          String   @id @default(cuid())
-//   name        String
-//   description String
-//   price       Int
-//   stock       Int?
-//   reviews     Review[]
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-// }
+model Service_label_hotel {
+  id              String        @id @default(cuid())
+  hotel           Hotel         @relation(fields: [hotelId], references: [id])
+  hotelId         String
+  label           Service_label @relation(fields: [service_labelId], references: [id])
+  service_labelId String
+}
 
-// model Review {
-//   id        String  @id @default(cuid())
-//   text      String
-//   rating    Int
-//   product   Product @relation(fields: [productId], references: [id])
-//   productId String
-// }
+model Service_label {
+  id                  String                @id @default(cuid())
+  service_label_name  String
+  Service_label_hotel Service_label_hotel[]
+}
 
 enum Stars {
   one
