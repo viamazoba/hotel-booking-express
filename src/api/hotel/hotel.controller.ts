@@ -8,7 +8,8 @@ function errorHandler(exception: unknown) {
       : (exception instanceof Error) ? exception.message : 'Something was wrong';
   
     return message;
-  }
+}
+
 export async function createHotelController(req: Request, res: Response){
     try{
         const hotelData: CreateHotelData = req.body; 
@@ -20,4 +21,4 @@ export async function createHotelController(req: Request, res: Response){
     }
 }
 
-export default errorHandler;
+// export default errorHandler;
