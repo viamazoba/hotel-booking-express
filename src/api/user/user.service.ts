@@ -13,11 +13,25 @@ export async function createUser(input: RequestUserData) {
 
 const data = {
     ...input,
-    password: hashedPassword
+    password: hashedPassword,
+    roleId: 'cllnxd3fi0000fut9r96l6q91'
   }
 
   const user = await prisma.user.create({
     data
+  });
+
+  return user;
+}
+
+
+export async function getUserByEmail(userEmail: string) {
+
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: userEmail,
+    },
   });
 
   return user;

@@ -80,8 +80,8 @@ model User {
   address       String?
   password      String
   login_type    String?
-  role          Role?         @relation(fields: [roleId], references: [id])
-  roleId        String?
+  role          Role          @relation(fields: [roleId], references: [id])
+  roleId        String
   city          City?         @relation(fields: [cityId], references: [id])
   cityId        String?
   booked_roomId String?
