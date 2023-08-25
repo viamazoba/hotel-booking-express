@@ -14,7 +14,7 @@ export async function createUser(input: RequestUserData) {
 const data = {
     ...input,
     password: hashedPassword,
-    roleId: 'cllnxd3fi0000fut9r96l6q91'
+    roleId: 'cllpsnrv200001cd9g01ymaag'
   }
 
   const user = await prisma.user.create({
