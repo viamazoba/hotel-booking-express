@@ -10,3 +10,9 @@ export const signToken = (payload: PayloadType) => {
   
     return token
 }
+
+export const verifyToken = (token: string) => {
+    const decoded = jwt.verify(token, SECRET) as PayloadType
+  
+    return decoded
+}

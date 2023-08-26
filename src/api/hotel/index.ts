@@ -4,16 +4,19 @@ import { getHotelController } from "./hotel.controller";
 import { getHotelByIdController } from "./hotel.controller";
 import { updateHotelController } from "./hotel.controller";
 import { deleteHotelController } from "./hotel.controller";
+import  { hasRole, isAuthenticated }  from "../../auth/auth.controller";
+
+
 const router = Router();
 //crear hotel
-router.post('/', createHotelController);
+router.post('/', isAuthenticated, hasRole(['admin']), createHotelController);
 //obtener todos los hoteles
 router.get('/', getHotelController);
 //obtener hotel por su ID
 router.get('/:id', getHotelByIdController);
 //actualizar un hotel por su ID
-router.put('/:id', updateHotelController);
+router.put('/:id', isAuthenticated, hasRole(['admin']),updateHotelController);
 //eliminar hotel por su Id
-router.delete('/:id', deleteHotelController);
-export default router;
+router.delete('/:id', isAuthenticated, hasRole(['admin']), deleteHotelController);
 
+export default router;
