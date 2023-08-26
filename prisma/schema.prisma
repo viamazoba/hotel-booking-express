@@ -17,14 +17,14 @@ model Hotel {
   description          String
   new_price            Int
   previous_price       Int?
-  status               String?
+  labels               String?
   phone                String
-  hotel_type           Stars
+  hotel_rating         Stars
   check_in             DateTime              @default(now())
   check_out            DateTime              @default(now())
   rooms                Room[]
-  City_hotel           City_hotel[]
   Service_labels_hotel Service_label_hotel[]
+  City                 City[]
 }
 
 model Room {
@@ -105,24 +105,17 @@ model Booked_room {
   roomId    String
 }
 
-model City_hotel {
-  id      String @id @default(cuid())
-  hotel   Hotel  @relation(fields: [hotelId], references: [id])
-  hotelId String
-  city    City   @relation(fields: [cityId], references: [id])
-  cityId  String
-}
-
 model City {
-  id          String       @id @default(cuid())
+  id          String  @id @default(cuid())
   name_city   String
-  postal_code String       @unique
+  postal_code String  @unique
   altitude    Float
   latitude    Float
-  City_hotel  City_hotel[]
-  country     Country      @relation(fields: [countryId], references: [id])
+  country     Country @relation(fields: [countryId], references: [id])
   countryId   String
   User        User[]
+  hotel       Hotel   @relation(fields: [hotelId], references: [id])
+  hotelId     String
 }
 
 model Country {
@@ -154,7 +147,7 @@ enum Stars {
 }
 
 enum Gender {
-  Man
-  Woman
-  Other
+  man
+  woman
+  other
 }

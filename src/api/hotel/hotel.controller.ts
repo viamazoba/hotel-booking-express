@@ -6,6 +6,7 @@ import { getHotelById } from "./hotel.service";
 import { updateHotel } from "./hotel.service";
 import { deleteHotel } from "./hotel.service";
 import { Hotel, CreateHotelData } from "./hotel.types";
+import { AuthRequest } from "../../auth/auth.types";
 
 function errorHandler(exception: unknown) {
     const message = (typeof exception === 'string') ? exception.toUpperCase()
@@ -14,7 +15,7 @@ function errorHandler(exception: unknown) {
     return message;
 }
 
-export async function createHotelController(req: Request, res: Response){
+export async function createHotelController(req: AuthRequest, res: Response){
     try{
         const hotelData: CreateHotelData = req.body; 
         const createdHotel: Hotel = await createHotel(hotelData);
@@ -44,7 +45,7 @@ try {
     res.status(500).json({ message })
 }    
 }
-export async function updateHotelController(req:Request, res: Response) {
+export async function updateHotelController(req:AuthRequest, res: Response) {
     const { id } = req.params;
     const hotelData = req.body;
     try{
@@ -55,7 +56,7 @@ export async function updateHotelController(req:Request, res: Response) {
     res.status(500).json({ message })
 }    
 }
-export async function deleteHotelController(req:Request, res: Response) {
+export async function deleteHotelController(req:AuthRequest, res: Response) {
  const { id } = req.params;
  try {
     const deletedHotel = await deleteHotel(id);
