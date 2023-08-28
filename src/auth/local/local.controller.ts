@@ -4,6 +4,7 @@ import { getUserByEmail } from '../../api/user/user.service';
 import { comparePassword } from '../utils/bcrypt';
 import { signToken } from '../auth.service';
 import { getRoleById } from '../../api/role/role.service'; 
+import { PayloadType } from '../auth.types';
 
 export async function loginHandler(req: Request, res: Response){
   const { email, password } = req.body;
@@ -22,19 +23,20 @@ export async function loginHandler(req: Request, res: Response){
       return res.status(401).send('Invalid credentials');
     }
 
+    const roleName = await getRoleById(user.roleId)
     // JWT
     const payload = {
       id: user.id,
       email: user.email,
-    }
+      role: roleName
+    } as PayloadType
+
     const token = signToken(payload)
-    const roleName = await getRoleById(user.roleId)
 
     const profile = {
       fullName: user.user_name,
       email: user.email,
       avatar: user.user_img,
-      roles: roleName
     }
 
     return res.status(200).json({ token, profile})

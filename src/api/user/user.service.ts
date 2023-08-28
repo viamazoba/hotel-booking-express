@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { hashPassword } from '../../auth/utils/bcrypt';
 import { RequestUserData } from './user.types';
+import { getRoleName } from '../role/role.service';
 
 const prisma = new PrismaClient();
 
@@ -9,12 +10,13 @@ const prisma = new PrismaClient();
 export async function createUser(input: RequestUserData) {
 
   const hashedPassword = await hashPassword(input.password);
+  const userRoleId = await getRoleName('user')
 
 
 const data = {
     ...input,
     password: hashedPassword,
-    roleId: 'cllpsnrv200001cd9g01ymaag'
+    roleId: userRoleId
   }
 
   const user = await prisma.user.create({

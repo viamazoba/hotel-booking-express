@@ -8,6 +8,7 @@ export type User = UserModel;
 // export type InitialUserData = Pick<UserModel, 'email' | 'password'>;
 
 export type RequestUserData = Pick<UserModel, 'email' | 'password' >;
+export type ReponseUserData = Pick<UserModel, 'email'> & {role_name: string, token: string};
 
 
 // export type RequestUserData = Pick<UserModel, 'email' | 'password'> & { roleId: string };

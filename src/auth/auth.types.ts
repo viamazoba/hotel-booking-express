@@ -5,6 +5,7 @@ import { User } from '../api/user/user.types';
 export type PayloadType = {
   id: string;
   email: string;
+  role: string
 //   iat?: number;
 //   exp?: number;
 }
