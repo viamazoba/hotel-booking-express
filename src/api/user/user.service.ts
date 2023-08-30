@@ -29,12 +29,17 @@ const data = {
 
 export async function getUserByEmail(userEmail: string) {
 
+  try{
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email: userEmail,
-    },
-  });
+    const user = await prisma.user.findUnique({
+      where: {
+        email: userEmail,
+      },
+    });
 
-  return user;
+    return user;
+  }catch(error){
+    console.error('Error in getUserByEmail:', error)
+    return null
+  }
 }
