@@ -114,8 +114,8 @@ model City {
   country     Country @relation(fields: [countryId], references: [id])
   countryId   String
   User        User[]
-  hotel       Hotel   @relation(fields: [hotelId], references: [id])
-  hotelId     String
+  hotel       Hotel?  @relation(fields: [hotelId], references: [id])
+  hotelId     String?
 }
 
 model Country {

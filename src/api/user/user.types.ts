@@ -9,6 +9,7 @@ export type User = UserModel;
 
 export type RequestUserData = Pick<UserModel, 'email' | 'password' >;
 export type ReponseUserData = Pick<UserModel, 'email'> & {token: string};
+export type UserProfile = UserModel & {city: {name_city: string|null, postal_code: string|null } | null}
 
 
 // export type RequestUserData = Pick<UserModel, 'email' | 'password'> & { roleId: string };
