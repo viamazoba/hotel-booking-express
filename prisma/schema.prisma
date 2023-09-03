@@ -14,17 +14,19 @@ model Hotel {
   id                   String                @id @default(cuid())
   hotel_name           String                @unique
   hotel_img            String
+  imgs                 String[]           
   description          String
   new_price            Int
   previous_price       Int?
   labels               String?
   phone                String
-  hotel_rating         Stars
+  hotel_rating         Stars?
   check_in             DateTime              @default(now())
   check_out            DateTime              @default(now())
   rooms                Room[]
   Service_labels_hotel Service_label_hotel[]
-  City                 City[]
+  City                 City @relation(fields: [cityId], references: [id])
+  cityId              String
 }
 
 model Room {
@@ -114,8 +116,7 @@ model City {
   country     Country @relation(fields: [countryId], references: [id])
   countryId   String
   User        User[]
-  hotel       Hotel?  @relation(fields: [hotelId], references: [id])
-  hotelId     String?
+  Hotel       Hotel[]
 }
 
 model Country {
