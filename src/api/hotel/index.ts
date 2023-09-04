@@ -9,7 +9,7 @@ import  { hasRole, isAuthenticated }  from "../../auth/auth.controller";
 
 const router = Router();
 //crear hotel
-router.post('/',/* isAuthenticated, hasRole(['admin']),*/ createHotelController);
+router.post('/', isAuthenticated, hasRole(['admin']), createHotelController);
 //obtener todos los hoteles
 router.get('/', getHotelController);
 //obtener hotel por su ID
