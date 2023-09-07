@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-import { createUser, verifyUserByEmail, getUserByEmail, editUser } from './user.service';
-import { User, RequestUserData, UserProfile, RequestEditUserData, EditUserData } from './user.types';
+import { createUser, verifyUserByEmail, getUserByEmail, editUser, editUserImage } from './user.service';
+import { User, RequestUserData, UserProfile, RequestEditUserData, EditUserData, EditUserImage} from './user.types';
 import { signToken, verifyToken} from '../../auth/auth.service';
 import { getRoleById } from '../role/role.service';
 import { PayloadType } from '../../auth/auth.types';
@@ -111,11 +111,33 @@ export async function editUserHandler(req: Request, res: Response) {
     const userToken = req.headers['authorization']?.split(' ')[1] as string
     const {id} = verifyToken(userToken)
 
+    const resuesta = await editUser(id, newUser);
 
-
-    await editUser(id, newUser);
+    console.log('Respuesta de la base de datos: ', resuesta)
 
     
+    res.status(201).json({ message: 'user has been update successfully' });
+  } catch ({ message }: any) {
+
+    res.status(400).json({ message })
+  }
+}
+
+
+export async function editUserImageHandler(req: Request, res: Response) {
+  try {
+
+    const {user_img}: EditUserImage = req.body;
+    
+    const newUserImage: EditUserImage = {
+      user_img
+    }
+
+    const userToken = req.headers['authorization']?.split(' ')[1] as string
+    const {id} = verifyToken(userToken)
+
+    await editUserImage(id, newUserImage);
+
     res.status(201).json({ message: 'user has been update successfully' });
   } catch ({ message }: any) {
 
