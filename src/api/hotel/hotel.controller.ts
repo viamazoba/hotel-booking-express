@@ -36,7 +36,7 @@ export async function createHotelController(req: AuthRequest, res: Response){
             previous_price: parseInt(req.body.normalPrice),
             //status: req.body.status,
             phone: req.body.phone,
-            hotel_type: starsToType(req.body.stars),
+            hotel_rating: starsToType(req.body.stars),
         }; 
         const createdHotel: Hotel = await createHotel(hotelData);
         res.status(201).json({ message: 'hotel has been created successfully',createdHotel});
