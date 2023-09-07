@@ -1,9 +1,8 @@
 import { faker } from '@faker-js/faker';
 
-// CJS
-// const { faker } = require('@faker-js/faker');
 
-export function createRandomUser() {
+
+export function getUserSeeder() {
   return {
     userId: faker.datatype.uuid(),
     username: faker.internet.userName(), //
@@ -16,8 +15,6 @@ export function createRandomUser() {
   };
 }
 
-// export const userSeeder = createRandomUser()
-
-export const userSeeder = faker.helpers.multiple(createRandomUser, {
+export const userSeeder = faker.helpers.multiple(getUserSeeder, {
   count: 5,
 })
