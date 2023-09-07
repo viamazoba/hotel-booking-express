@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 
-import { createUser, verifyUserByEmail, getUserByEmail } from './user.service';
-import { User, RequestUserData, UserProfile } from './user.types';
-import { signToken } from '../../auth/auth.service';
+import { createUser, verifyUserByEmail, getUserByEmail, editUser } from './user.service';
+import { User, RequestUserData, UserProfile, RequestEditUserData, EditUserData } from './user.types';
+import { signToken, verifyToken} from '../../auth/auth.service';
 import { getRoleById } from '../role/role.service';
 import { PayloadType } from '../../auth/auth.types';
+import { getCityByName } from '../city/city.service';
 
 
 export async function createUserHandler(req: Request, res: Response) {
@@ -87,5 +88,37 @@ export async function getUserHandler(req: Request, res: Response) {
   } catch (error) {
     console.error('Error in getUserHandler:', error);
     res.status(500).json({ message: 'Internal server error' }); 
+  }
+}
+
+
+export async function editUserHandler(req: Request, res: Response) {
+  try {
+
+    const data: RequestEditUserData = req.body;
+
+    const cityId = await getCityByName(data.name_city)
+    
+    const newUser: EditUserData = {
+      user_name: data.user_name,
+      address: data.address,
+      gender: data.gender,
+      phone: data.phone,
+      birthday: data.birthday,
+      cityId
+    }
+
+    const userToken = req.headers['authorization']?.split(' ')[1] as string
+    const {id} = verifyToken(userToken)
+
+
+
+    await editUser(id, newUser);
+
+    
+    res.status(201).json({ message: 'user has been update successfully' });
+  } catch ({ message }: any) {
+
+    res.status(400).json({ message })
   }
 }

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 import { hashPassword } from '../../auth/utils/bcrypt';
-import { RequestUserData } from './user.types';
+import { RequestUserData, EditUserData } from './user.types';
 import { getRoleName } from '../role/role.service';
 
 const prisma = new PrismaClient();
@@ -67,6 +67,27 @@ export async function getUserByEmail(userEmail: string) {
     console.error('Error in getUserByEmail:', error)
     return null
   }
+}
+
+export async function editUser(id: string, input: EditUserData) {
+
+  const data = {
+      ...input,
+    }
+
+  try{
+
+    const user = await prisma.user.update({
+      where: {id},
+      data
+    });
+    return user;
+
+  }catch(error){
+    return error
+  }
+
+
 }
 
 // export async function editUserByEmail(idUser: string, newDataUser: RequestUserData) {
