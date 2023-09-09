@@ -15,8 +15,8 @@ router.get('/', getHotelController);
 //obtener hotel por su ID
 router.get('/:id', getHotelByIdController);
 //actualizar un hotel por su ID
-router.put('/:id', isAuthenticated, hasRole(['admin']),updateHotelController);
+router.put('/:id', /*isAuthenticated, hasRole(['admin']),*/updateHotelController);
 //eliminar hotel por su Id
-router.delete('/:id', isAuthenticated, hasRole(['admin']), deleteHotelController);
+router.delete('/:id', /*isAuthenticated, hasRole(['admin']),*/ deleteHotelController);
 
 export default router;
