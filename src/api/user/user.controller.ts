@@ -6,6 +6,7 @@ import { signToken, verifyToken} from '../../auth/auth.service';
 import { getRoleById } from '../role/role.service';
 import { PayloadType } from '../../auth/auth.types';
 import { getCityByName } from '../city/city.service';
+import { comparePassword } from '../../auth/utils/bcrypt';
 
 
 export async function createUserHandler(req: Request, res: Response) {
@@ -113,7 +114,6 @@ export async function editUserHandler(req: Request, res: Response) {
 
     const resuesta = await editUser(id, newUser);
 
-    console.log('Respuesta de la base de datos: ', resuesta)
 
     
     res.status(201).json({ message: 'user has been update successfully' });
@@ -142,5 +142,55 @@ export async function editUserImageHandler(req: Request, res: Response) {
   } catch ({ message }: any) {
 
     res.status(400).json({ message })
+  }
+}
+
+
+export async function loginUserHandler(req: Request, res: Response) {
+
+  try {
+    const { email } = req.body;
+    const userData: UserProfile | null = await getUserByEmail(email);
+    
+    if(!userData){
+      return res.status(401).json({message:'Incorrect credentials'})
+    }
+
+    const {password} = userData
+    const inputPassword = req.body.password
+
+    const userAuthentication = await comparePassword(inputPassword, password)
+    console.log('Este es el resultado de comparar las contraseñas: ', userAuthentication)
+
+    if(!userAuthentication){
+      return res.status(401).json({message:'Incorrect credentials'})
+    }
+
+    const roleName = await getRoleById(userData.roleId) as string
+
+    const dataToken = {
+      id : userData.id,
+      email: userData.email,
+      role: roleName
+    } as PayloadType
+
+    const token =  signToken(dataToken)
+
+    const user = {
+      'user_name': userData.user_name,
+      'user_img': userData.user_img,
+      'phone': userData.phone,
+      'address': userData.address,
+      'gender' : userData.gender,
+      'birthday': userData.birthday,
+      'name_city': userData.city?.name_city,
+      'postal_code' : userData.city?.postal_code
+
+    }
+    res.status(200).json({ message: 'User is authorized', user , token});
+
+  } catch (error) {
+    console.error('Error in getUserHandler:', error);
+    res.status(500).json({ message: 'Internal server error' }); 
   }
 }
