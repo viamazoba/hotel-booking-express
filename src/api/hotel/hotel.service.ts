@@ -6,12 +6,14 @@ const prisma = new PrismaClient();
 
 export async function createHotel(data: CreateHotelData){
     try {
+      console.log("imprime data", data)
         const hotel = await prisma.hotel.create({
           data
         });
     
         return hotel;
       } catch (error: any) {
+        console.log("imprime error", error)
         throw new Error(`Error creating hotel: ${error.message}`);
       }
 }
