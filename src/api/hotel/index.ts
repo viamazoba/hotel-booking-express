@@ -4,6 +4,7 @@ import { getHotelController } from "./hotel.controller";
 import { getHotelByIdController } from "./hotel.controller";
 import { updateHotelController } from "./hotel.controller";
 import { deleteHotelController } from "./hotel.controller";
+import { getHotelRoomsController } from "./hotel.controller";
 import  { hasRole, isAuthenticated }  from "../../auth/auth.controller";
 
 
@@ -18,5 +19,7 @@ router.get('/:id', getHotelByIdController);
 router.put('/:id', /*isAuthenticated, hasRole(['admin']),*/updateHotelController);
 //eliminar hotel por su Id
 router.delete('/:id', /*isAuthenticated, hasRole(['admin']),*/ deleteHotelController);
+// Ruta para obtener las habitaciones de un hotel específico
+router.get('/hotels/:hotelId/rooms', getHotelRoomsController);
 
 export default router;

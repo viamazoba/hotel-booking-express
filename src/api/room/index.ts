@@ -9,10 +9,10 @@ import  { hasRole, isAuthenticated }  from "../../auth/auth.controller";
 
 const router= Router();
 
-router.post('/',isAuthenticated, hasRole(['admin']), createRoomHandler);
+router.post('/',/*isAuthenticated, hasRole(['admin']),*/ createRoomHandler);
 router.get('/', getRoomController);
 router.get('/:id', getRoomByIdController);
-router.put('/:id', isAuthenticated, hasRole(['admin']),updateRoomController);
-router.delete('/:id', isAuthenticated, hasRole(['admin']), deleteRoomController);
+router.put('/:id', /*isAuthenticated, hasRole(['admin']),*/updateRoomController);
+router.delete('/:id', /*isAuthenticated, hasRole(['admin']),*/ deleteRoomController);
 
 export default router;

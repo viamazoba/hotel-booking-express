@@ -5,9 +5,11 @@ import { getHotels } from "./hotel.service";
 import { getHotelById } from "./hotel.service";
 import { updateHotel } from "./hotel.service";
 import { deleteHotel } from "./hotel.service";
+import { getHotelsRooms } from "./hotel.service";
 import { Hotel, CreateHotelData } from "./hotel.types";
 import { AuthRequest } from "../../auth/auth.types";
 import { Stars } from "@prisma/client";
+import { getCityByName } from "../city/city.service";
 
 function errorHandler(exception: unknown) {
     const message = (typeof exception === 'string') ? exception.toUpperCase()
@@ -28,6 +30,7 @@ export async function createHotelController(req: AuthRequest, res: Response){
                 case "5": return Stars.five;
                 default: return Stars.one;      
         }}
+        const city_id = await getCityByName(req.body.city)
         const hotelData: CreateHotelData = {
             hotel_name: req.body.name,
             hotel_img: req.body.images,
@@ -36,8 +39,8 @@ export async function createHotelController(req: AuthRequest, res: Response){
             previous_price: parseInt(req.body.normalPrice),
             phone: req.body.phone,
             labels: req.body.status,
-            cityId: "clm8dxx6z0002veqw09fzqctq",
-            // cityId: req.body.cityId,
+            // cityId: "clm8dxx6z0002veqw09fzqctq",
+            cityId: city_id,
             // imgs: req.body.imgs,
             hotel_rating: starsToType(req.body.stars),
         }; 
@@ -110,6 +113,16 @@ export async function deleteHotelController(req:AuthRequest, res: Response) {
     const message = errorHandler(error);
     res.status(500).json({ message });
  }   
+}
+export async function getHotelRoomsController(req:AuthRequest, res: Response) {
+    const { hotelId } = req.params;
+    try{
+        const hotelRooms = await getHotelsRooms(hotelId);
+        res.status(200).json(hotelRooms);
+    } catch (error){
+        console.error(error);
+        res.status(500).json({message: 'error al obtener las habitaciones del hotel'})
+    }
 }
 
 // export default errorHandler;

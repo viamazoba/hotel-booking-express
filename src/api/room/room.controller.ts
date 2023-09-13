@@ -16,7 +16,14 @@ function errorHandler(exception: unknown) {
   }
 export async function createRoomHandler(req: Request, res: Response){
     try{
-        const roomData: CreateRoomData = req.body; 
+        const roomData: CreateRoomData = {
+          room_name: req.body.name,
+          room_img: req.body.imageCreateRoom,
+          new_price: parseInt(req.body.salePrice),
+          previous_price: parseInt(req.body.normalPrice),
+          max_guests: parseInt(req.body.guests),
+          hotelId: "clm8dxx7e0043veqw2iypijog",
+        }; 
         const createdRoom: Room = await createRoom(roomData);
         res.status(201).json({ message: 'Room has been created successfully',createdRoom});
     } catch (error: unknown) {

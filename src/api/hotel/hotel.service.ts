@@ -20,7 +20,15 @@ export async function createHotel(data: CreateHotelData){
 
 export async function getHotels(){
   try{
-    const hotels = await prisma.hotel.findMany();
+    const hotels = await prisma.hotel.findMany({
+      include:{
+        City:{
+          select: {
+            name_city: true,
+          }
+        }
+      },}
+    );
     return hotels
   } catch (error: any){
     throw new Error (`Error fetching hotels: ${error.message}`)
@@ -62,4 +70,17 @@ export async function deleteHotel(id:string) {
     
   }
   
+}
+export async function getHotelsRooms(hotelId:string) {
+  try {
+    const hotel = await prisma.hotel.findUnique({
+      where: {id: hotelId},
+      include: {
+        rooms: true,
+      },
+    });
+    return hotel?.rooms;
+  } catch (error) {
+    throw error;
+  }
 }
