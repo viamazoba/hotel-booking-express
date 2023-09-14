@@ -5,7 +5,7 @@ import { getRooms } from "./room.service";
 import { getRoomById } from "./room.service";
 import { updateRoom } from "./room.service";
 import { deleteRoom } from "./room.service";
-import { Room, CreateRoomData } from "./room.types";
+import { Room, CreateRoomData, editCreateRoomData } from "./room.types";
 import { AuthRequest } from "../../auth/auth.types";
 
 function errorHandler(exception: unknown) {
@@ -22,7 +22,8 @@ export async function createRoomHandler(req: Request, res: Response){
           new_price: parseInt(req.body.salePrice),
           previous_price: parseInt(req.body.normalPrice),
           max_guests: parseInt(req.body.guests),
-          hotelId: "clm8dxx7e0043veqw2iypijog",
+          hotelId: req.query.hotelId as string,
+          // hotel_name: req
         }; 
         const createdRoom: Room = await createRoom(roomData);
         res.status(201).json({ message: 'Room has been created successfully',createdRoom});
@@ -53,13 +54,24 @@ try {
 }
 export async function updateRoomController(req:AuthRequest, res: Response) {
   const { id } = req.params;
-  const roomData = req.body;
+  console.log('este es el id de la habitacion: ', id)
+  // const roomData = req.body;
   try{
-      const updatedRoom = await updateRoom(id, roomData);
-      res.status(200).json(updateRoom);
-} catch (error:any){
-  const message = errorHandler(error);
-  res.status(500).json({ message })
+    console.log(req.body)
+    console.log('este es el console de req.query ', req.query)
+    const roomData: editCreateRoomData = {
+      room_name: req.body.name,
+      room_img: req.body.imageCreateRoom,
+      new_price: parseInt(req.body.salePrice),
+      previous_price: parseInt(req.body.normalPrice),
+      max_guests: parseInt(req.body.guests),
+    }; 
+    const updatedRoom = await updateRoom(id, roomData);
+    res.status(200).json(updatedRoom);
+    } catch (error:any){
+    const message = errorHandler(error);
+    console.log('aca esta el error')
+    res.status(500).json({ message })
 }    
 }
 export async function deleteRoomController(req:AuthRequest, res: Response) {

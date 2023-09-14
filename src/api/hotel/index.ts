@@ -20,6 +20,6 @@ router.put('/:id', /*isAuthenticated, hasRole(['admin']),*/updateHotelController
 //eliminar hotel por su Id
 router.delete('/:id', /*isAuthenticated, hasRole(['admin']),*/ deleteHotelController);
 // Ruta para obtener las habitaciones de un hotel específico
-router.get('/hotels/:hotelId/rooms', getHotelRoomsController);
+router.get('/:hotelId/rooms', getHotelRoomsController);
 
 export default router;

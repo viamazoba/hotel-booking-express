@@ -98,7 +98,7 @@ export async function updateHotelController(req:AuthRequest, res: Response) {
             hotel_rating: starsToType(req.body.stars),
         }; 
         const updatedHotel = await updateHotel(id, hotelData);
-        res.status(200).json(updateHotel);
+        res.status(200).json(updatedHotel);
         } catch (error:any){
         const message = errorHandler(error);
         res.status(500).json({ message })

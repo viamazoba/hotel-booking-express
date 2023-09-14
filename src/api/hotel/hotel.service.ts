@@ -22,6 +22,11 @@ export async function getHotels(){
   try{
     const hotels = await prisma.hotel.findMany({
       include:{
+        rooms:{
+          select: {
+            room_name: true
+          }
+        },
         City:{
           select: {
             name_city: true,
@@ -39,6 +44,18 @@ export async function getHotelById(id:string){
   try {
     const hotel = await prisma.hotel.findUnique({
       where: { id },
+      include:{
+        rooms:{
+          select: {
+            room_name: true
+          }
+        },
+        City:{
+          select: {
+            name_city: true,
+          }
+        }
+      },
     });
     return hotel;
   } catch (error:any) {

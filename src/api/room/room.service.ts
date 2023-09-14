@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CreateRoomData } from "./room.types";
+import { CreateRoomData, editCreateRoomData } from "./room.types";
 
 const prisma = new PrismaClient();
 
@@ -16,7 +16,16 @@ export async function createRoom(data: CreateRoomData){
 
 export async function getRooms(){
   try{
-    const rooms = await prisma.room.findMany();
+    const rooms = await prisma.room.findMany({
+      include:{
+        hotel:{
+          select: {
+            hotel_name: true,
+            id: true,
+          }
+        }
+      },
+    });
     return rooms
   } catch (error: any){
     throw new Error (`Error fetching rooms: ${error.message}`)
@@ -35,8 +44,10 @@ export async function getRoomById(id:string){
   }
 }
 
-export async function updateRoom(id:string,data:CreateRoomData) {
+export async function updateRoom(id:string,data:editCreateRoomData) {
   try{
+    console.log("Updating room with ID:", id);
+    console.log("Updated data:", data);
     const updatedRoom = await prisma.room.update({
       where: { id },
       data
