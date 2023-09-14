@@ -27,6 +27,13 @@ export async function getRoomById(id:string){
   try {
     const room = await prisma.room.findUnique({
       where: { id },
+      include:{
+        hotel:{
+          include:{
+          City:{ 
+            include: {country: true}}
+        }
+      }}
     });
     return room;
   } catch (error:any) {

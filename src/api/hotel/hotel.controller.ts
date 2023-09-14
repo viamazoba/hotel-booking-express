@@ -50,7 +50,8 @@ export async function createHotelController(req: AuthRequest, res: Response){
 }
 export async function getHotelController (req:Request, res: Response) {
     try{
-        const hotels = await getHotels();
+        const filterCity= req.query.city
+        const hotels = await getHotels(filterCity as string);
         res.status(200).json(hotels);
     } catch(error:any){
         const message = errorHandler(error);
