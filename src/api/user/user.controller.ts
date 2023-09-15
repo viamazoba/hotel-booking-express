@@ -7,7 +7,7 @@ import { getRoleById } from '../role/role.service';
 import { PayloadType } from '../../auth/auth.types';
 import { getCityByName } from '../city/city.service';
 import { comparePassword } from '../../auth/utils/bcrypt';
-
+import { sendMailSendGrid } from '../../config/sendGrid';
 
 export async function createUserHandler(req: Request, res: Response) {
   try {
@@ -34,6 +34,14 @@ export async function createUserHandler(req: Request, res: Response) {
       token
     }
 
+    // Send Mail sendgrid
+    const emailData = {
+      from: 'No reply <victormazo95121@gmail.com>',
+      to: user.email,
+      subject: 'Welcome to Hotel Booking',
+      templateId: 'd-6215e5e7b98e4952a40455442f96d0a9'
+    }
+    sendMailSendGrid(emailData)
     
     res.status(201).json({ message: 'user has been created successfully', dataUser });
   } catch ({ message }: any) {
