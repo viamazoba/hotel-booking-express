@@ -1,10 +1,10 @@
 import { Application } from 'express';
-
 import healthcheckRouter from './api/healthcheck';
 import userRouter from './api/user';
 import authLocalRouter from './auth/local';
 import hotelRouter from './api/hotel';
 import roomRouter from './api/room'
+import bookedRoomRouter from './api/bookedRoom'
 import paymentRouter from './api/payment'
 
 const routes = (app: Application) => {
@@ -12,6 +12,8 @@ const routes = (app: Application) => {
   app.use('/api/user', userRouter)
   app.use('/api/hotel', hotelRouter)
   app.use('/api/room', roomRouter)
+  app.use('/api/booked-room', bookedRoomRouter)
+
 //   //Auth
   app.use('/auth/local', authLocalRouter)
   app.use('/api/payment', paymentRouter)
