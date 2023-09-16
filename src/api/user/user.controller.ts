@@ -11,7 +11,6 @@ import { sendMailSendGrid } from '../../config/sendGrid';
 
 export async function createUserHandler(req: Request, res: Response) {
   try {
-
     const { email, password }: RequestUserData = req.body;
     
     const newUser: RequestUserData = {
@@ -42,6 +41,7 @@ export async function createUserHandler(req: Request, res: Response) {
       templateId: 'd-6215e5e7b98e4952a40455442f96d0a9'
     }
     sendMailSendGrid(emailData)
+
     
     res.status(201).json({ message: 'user has been created successfully', dataUser });
   } catch ({ message }: any) {
@@ -144,7 +144,7 @@ export async function editUserImageHandler(req: Request, res: Response) {
     const userToken = req.headers['authorization']?.split(' ')[1] as string
     const {id} = verifyToken(userToken)
 
-    await editUserImage(id, newUserImage);
+    await editUserImage(id, newUserImage.user_img as string);
 
     res.status(201).json({ message: 'user has been update successfully' });
   } catch ({ message }: any) {
@@ -168,7 +168,6 @@ export async function loginUserHandler(req: Request, res: Response) {
     const inputPassword = req.body.password
 
     const userAuthentication = await comparePassword(inputPassword, password)
-    console.log('Este es el resultado de comparar las contraseñas: ', userAuthentication)
 
     if(!userAuthentication){
       return res.status(401).json({message:'Incorrect credentials'})

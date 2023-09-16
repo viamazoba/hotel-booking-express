@@ -90,10 +90,10 @@ export async function editUser(id: string, input: EditUserData) {
 
 }
 
-export async function editUserImage(id: string, input: EditUserImage) {
+export async function editUserImage(id: string, input: string) {
 
   const data = {
-      ...input,
+      user_img : input,
     }
 
   try{

@@ -22,7 +22,7 @@ export async function getHotels(filterCity: string){
   try{
     const hotels = await prisma.hotel.findMany({
       where:{
-        City:{
+        city:{
           name_city: {
             contains: filterCity
           },
@@ -53,7 +53,7 @@ export async function getHotelById(id: string) {
 
           }
         },
-        City:{ 
+        city:{ 
           include: {country: true}},
         Service_labels_hotel: {
           include: {
