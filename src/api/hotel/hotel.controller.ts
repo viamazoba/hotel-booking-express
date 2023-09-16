@@ -84,6 +84,7 @@ export async function updateHotelController(req:AuthRequest, res: Response) {
                 case "5": return Stars.five;
                 default: return Stars.one;      
         }}
+        const city_id = await getCityByName(req.body.city);
         const hotelData: CreateHotelData = {
             hotel_name: req.body.name,
             hotel_img: req.body.images,
@@ -92,8 +93,8 @@ export async function updateHotelController(req:AuthRequest, res: Response) {
             previous_price: parseInt(req.body.normalPrice),
             phone: req.body.phone,
             labels: req.body.status,
-            cityId: "clm8dxx6z0002veqw09fzqctq",
-            // cityId: req.body.cityId,
+            // cityId: "clm8dxx6z0002veqw09fzqctq",
+            cityId: city_id,
             // imgs: req.body.imgs,
             hotel_rating: starsToType(req.body.stars),
         }; 
