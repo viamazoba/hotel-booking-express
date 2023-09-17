@@ -4,27 +4,13 @@ import { getInclusion_room } from "./inclusion.service";
 import { getInclusionRoomById } from "./inclusion.service";
 import { updateInclusionroom } from "./inclusion.service";
 import { Inclusion_room, CreateInclusionData } from "./inclusion.types";
-
+import { getInclusionByName } from "./inclusion.service";
 function errorHandler(exception: unknown) {
     const message = (typeof exception === 'string') ? exception.toUpperCase()
       : (exception instanceof Error) ? exception.message : 'Something was wrong';
 
     return message;
   }
-
-  export async function createInclusionDataHandler(req: Request, res: Response){
-    try{
-        const inclusionData: CreateInclusionData = {
-            roomId: req.query.id as string,
-            inclusionId: req.body.id,
-        }; 
-        const createdInclusion: Inclusion_room = await createInclusion_room(inclusionData);
-        res.status(201).json({ message: 'Room has been created successfully',createInclusion_room});
-    } catch (error: unknown) {
-        const message = errorHandler(error);
-        res.status(400).json({ message })
-    }
-}
 
 export async function getInclusionRoomController (req: Request, res: Response){
     try{
@@ -48,7 +34,6 @@ export async function getInclusionRoomByIdController(req:Request, res: Response)
     }
 export async function uptadateInclusionRoomController(req: Request, res: Response) {
     const { id } = req.params;
-    console.log('este es el id de inclusion: ', id)
     try{
       const inclusionData: CreateInclusionData = {
         roomId: req.body.id,
@@ -58,7 +43,6 @@ export async function uptadateInclusionRoomController(req: Request, res: Respons
       res.status(200).json(updatedInclusionRoom);
       } catch (error:any){
       const message = errorHandler(error);
-      console.log('aca esta el error')
       res.status(500).json({ message })
   }    
   }

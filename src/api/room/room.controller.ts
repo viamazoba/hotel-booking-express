@@ -5,6 +5,9 @@ import { getRooms } from "./room.service";
 import { getRoomById } from "./room.service";
 import { updateRoom } from "./room.service";
 import { deleteRoom } from "./room.service";
+import { getAmenitiesRoomByRoomId } from "../amenities_room/amenities.service";
+import { createAmentiy_rooms } from "../amenities_room/amenities.service";
+   
 import { Room, CreateRoomData, editCreateRoomData } from "./room.types";
 import { AuthRequest } from "../../auth/auth.types";
 
@@ -23,9 +26,13 @@ export async function createRoomHandler(req: Request, res: Response){
           previous_price: parseInt(req.body.normalPrice),
           max_guests: parseInt(req.body.guests),
           hotelId: req.query.hotelId as string,
-          // hotel_name: req
         }; 
         const createdRoom: Room = await createRoom(roomData);
+        const amenities = req.body.amenities;
+        const allAmenities = await getAmenitiesRoomByRoomId()
+        const amenitiesIds = allAmenities.filter(amenity => amenities.includes(amenity.amenity_name)).map(amenity => amenity.id)
+        const arrayToSave = amenitiesIds.map(id => ({amenityId:id, roomId: createdRoom.id}))
+        await createAmentiy_rooms(arrayToSave)
         res.status(201).json({ message: 'Room has been created successfully',createdRoom});
     } catch (error: unknown) {
         const message = errorHandler(error);
@@ -54,11 +61,7 @@ try {
 }
 export async function updateRoomController(req:AuthRequest, res: Response) {
   const { id } = req.params;
-  console.log('este es el id de la habitacion: ', id)
-  // const roomData = req.body;
   try{
-    console.log(req.body)
-    console.log('este es el console de req.query ', req.query)
     const roomData: editCreateRoomData = {
       room_name: req.body.name,
       room_img: req.body.imageCreateRoom,
@@ -70,7 +73,6 @@ export async function updateRoomController(req:AuthRequest, res: Response) {
     res.status(200).json(updatedRoom);
     } catch (error:any){
     const message = errorHandler(error);
-    console.log('aca esta el error')
     res.status(500).json({ message })
 }    
 }

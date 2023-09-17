@@ -39,9 +39,7 @@ export async function createHotelController(req: AuthRequest, res: Response){
             previous_price: parseInt(req.body.normalPrice),
             phone: req.body.phone,
             labels: req.body.status,
-            // cityId: "clm8dxx6z0002veqw09fzqctq",
             cityId: city_id,
-            // imgs: req.body.imgs,
             hotel_rating: starsToType(req.body.stars),
         }; 
         const createdHotel: Hotel = await createHotel(hotelData);
@@ -93,9 +91,7 @@ export async function updateHotelController(req:AuthRequest, res: Response) {
             previous_price: parseInt(req.body.normalPrice),
             phone: req.body.phone,
             labels: req.body.status,
-            // cityId: "clm8dxx6z0002veqw09fzqctq",
             cityId: city_id,
-            // imgs: req.body.imgs,
             hotel_rating: starsToType(req.body.stars),
         }; 
         const updatedHotel = await updateHotel(id, hotelData);
@@ -121,9 +117,6 @@ export async function getHotelRoomsController(req:AuthRequest, res: Response) {
         const hotelRooms = await getHotelsRooms(hotelId);
         res.status(200).json(hotelRooms);
     } catch (error){
-        console.error(error);
         res.status(500).json({message: 'error al obtener las habitaciones del hotel'})
     }
 }
-
-// export default errorHandler;

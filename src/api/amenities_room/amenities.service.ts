@@ -3,22 +3,16 @@ import { CreateAmenitiesData } from "./amenities.types";
 
 const prisma = new PrismaClient();
 
-export async function getAmenite_room(){
+export async function getAmenitiesRoomByRoomId(roomId:string = '-1'){
+  console.log('roomId',roomId)
     try{
-      const amenitiesRoom = await prisma.amenity_room.findMany({
-        include:{
-          amenity:{
-            select: {
-              amenity_name: true,
-              id: true,
-            }
+      const amenitiesRoom = await prisma.amenity.findMany({
+        include: {
+          Amenity_room: {
+            where: {
+              roomId: roomId,
+            },
           },
-          room:{
-            select:{
-              id: true,
-            }
-          }
-  
         },
       });
       return amenitiesRoom
@@ -50,3 +44,14 @@ export async function getAmenite_room(){
       throw new Error(`Error updating room: ${error.message}`); 
     }
   }
+
+  export async function createAmentiy_rooms(data: CreateAmenitiesData[]){
+    try {
+        const inclusion = await prisma.amenity_room.createMany({
+          data
+        });
+        return inclusion;
+      } catch (error: any) {
+        throw new Error(`Error creating amenities: ${error.message}`);
+    }
+}

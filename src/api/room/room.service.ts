@@ -6,7 +6,10 @@ const prisma = new PrismaClient();
 export async function createRoom(data: CreateRoomData){
     try {
         const room = await prisma.room.create({
-          data
+          data,
+          include:{
+            Amenity_room: true,
+          },
         });
         return room;
       } catch (error: any) {
@@ -22,8 +25,14 @@ export async function getRooms(){
           select: {
             hotel_name: true,
             id: true,
+              
           }
-        }
+        },
+        Amenity_room:{
+          select: {
+            amenityId: true
+          }
+        },
       },
     });
     return rooms
@@ -36,6 +45,14 @@ export async function getRoomById(id:string){
   try {
     const room = await prisma.room.findUnique({
       where: { id },
+      include:{
+        Amenity_room:{
+          select:{
+            amenity: true
+
+          }
+        },
+      },
     });
     return room;
   } catch (error:any) {
@@ -46,8 +63,6 @@ export async function getRoomById(id:string){
 
 export async function updateRoom(id:string,data:editCreateRoomData) {
   try{
-    console.log("Updating room with ID:", id);
-    console.log("Updated data:", data);
     const updatedRoom = await prisma.room.update({
       where: { id },
       data

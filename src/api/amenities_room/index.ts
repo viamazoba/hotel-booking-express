@@ -5,6 +5,7 @@ import { updateRoomController } from "../room/room.controller";
 
 const router = Router();
 router.get('/', getAmenitiesRoomController);
+router.get('/:roomId', getAmenitiesRoomController);
 router.get('/:id', getAmenitiesRoomByIdController);
 router.put('/:id', updateRoomController);
 
