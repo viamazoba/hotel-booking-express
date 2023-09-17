@@ -1,12 +1,15 @@
 import { PrismaClient } from "@prisma/client";
-import { CreateRoomData } from "./room.types";
+import { CreateRoomData, editCreateRoomData } from "./room.types";
 
 const prisma = new PrismaClient();
 
 export async function createRoom(data: CreateRoomData){
     try {
         const room = await prisma.room.create({
-          data
+          data,
+          include:{
+            Amenity_room: true,
+          },
         });
         return room;
       } catch (error: any) {
@@ -16,7 +19,22 @@ export async function createRoom(data: CreateRoomData){
 
 export async function getRooms(){
   try{
-    const rooms = await prisma.room.findMany();
+    const rooms = await prisma.room.findMany({
+      include:{
+        hotel:{
+          select: {
+            hotel_name: true,
+            id: true,
+              
+          }
+        },
+        Amenity_room:{
+          select: {
+            amenityId: true
+          }
+        },
+      },
+    });
     return rooms
   } catch (error: any){
     throw new Error (`Error fetching rooms: ${error.message}`)
@@ -28,13 +46,20 @@ export async function getRoomById(id:string){
     const room = await prisma.room.findUnique({
       where: { id },
       include:{
+        Amenity_room:{
+          select:{
+            amenity: true
+
+          }
+        },
         hotel:{
           include:{
-          city:{ 
+          City:{ 
             include: {country: true}}
         }
       }}
-    });
+      },    
+    );
     return room;
   } catch (error:any) {
     throw new Error(`Error fetching room by ID: ${error.message}`);
@@ -42,7 +67,7 @@ export async function getRoomById(id:string){
   }
 }
 
-export async function updateRoom(id:string,data:CreateRoomData) {
+export async function updateRoom(id:string,data:editCreateRoomData) {
   try{
     const updatedRoom = await prisma.room.update({
       where: { id },

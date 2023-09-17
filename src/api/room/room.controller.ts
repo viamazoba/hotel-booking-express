@@ -5,7 +5,10 @@ import { getRooms } from "./room.service";
 import { getRoomById } from "./room.service";
 import { updateRoom } from "./room.service";
 import { deleteRoom } from "./room.service";
-import { Room, CreateRoomData } from "./room.types";
+import { getAmenitiesRoomByRoomId } from "../amenities_room/amenities.service";
+import { createAmentiy_rooms } from "../amenities_room/amenities.service";
+   
+import { Room, CreateRoomData, editCreateRoomData } from "./room.types";
 import { AuthRequest } from "../../auth/auth.types";
 
 function errorHandler(exception: unknown) {
@@ -16,8 +19,20 @@ function errorHandler(exception: unknown) {
   }
 export async function createRoomHandler(req: Request, res: Response){
     try{
-        const roomData: CreateRoomData = req.body; 
+        const roomData: CreateRoomData = {
+          room_name: req.body.name,
+          room_img: req.body.imageCreateRoom,
+          new_price: parseInt(req.body.salePrice),
+          previous_price: parseInt(req.body.normalPrice),
+          max_guests: parseInt(req.body.guests),
+          hotelId: req.query.hotelId as string,
+        }; 
         const createdRoom: Room = await createRoom(roomData);
+        const amenities = req.body.amenities;
+        const allAmenities = await getAmenitiesRoomByRoomId()
+        const amenitiesIds = allAmenities.filter(amenity => amenities.includes(amenity.amenity_name)).map(amenity => amenity.id)
+        const arrayToSave = amenitiesIds.map(id => ({amenityId:id, roomId: createdRoom.id}))
+        await createAmentiy_rooms(arrayToSave)
         res.status(201).json({ message: 'Room has been created successfully',createdRoom});
     } catch (error: unknown) {
         const message = errorHandler(error);
@@ -46,13 +61,19 @@ try {
 }
 export async function updateRoomController(req:AuthRequest, res: Response) {
   const { id } = req.params;
-  const roomData = req.body;
   try{
-      const updatedRoom = await updateRoom(id, roomData);
-      res.status(200).json(updateRoom);
-} catch (error:any){
-  const message = errorHandler(error);
-  res.status(500).json({ message })
+    const roomData: editCreateRoomData = {
+      room_name: req.body.name,
+      room_img: req.body.imageCreateRoom,
+      new_price: parseInt(req.body.salePrice),
+      previous_price: parseInt(req.body.normalPrice),
+      max_guests: parseInt(req.body.guests),
+    }; 
+    const updatedRoom = await updateRoom(id, roomData);
+    res.status(200).json(updatedRoom);
+    } catch (error:any){
+    const message = errorHandler(error);
+    res.status(500).json({ message })
 }    
 }
 export async function deleteRoomController(req:AuthRequest, res: Response) {
