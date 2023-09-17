@@ -6,11 +6,11 @@ import { signToken, verifyToken} from '../../auth/auth.service';
 import { getRoleById } from '../role/role.service';
 import { PayloadType } from '../../auth/auth.types';
 import { getCityByName } from '../city/city.service';
-
+import { comparePassword } from '../../auth/utils/bcrypt';
+import { sendMailSendGrid } from '../../config/sendGrid';
 
 export async function createUserHandler(req: Request, res: Response) {
   try {
-
     const { email, password }: RequestUserData = req.body;
     
     const newUser: RequestUserData = {
@@ -32,6 +32,15 @@ export async function createUserHandler(req: Request, res: Response) {
       email: user.email,
       token
     }
+
+    // Send Mail sendgrid
+    const emailData = {
+      from: 'No reply <victormazo95121@gmail.com>',
+      to: user.email,
+      subject: 'Welcome to Hotel Booking',
+      templateId: 'd-6215e5e7b98e4952a40455442f96d0a9'
+    }
+    sendMailSendGrid(emailData)
 
     
     res.status(201).json({ message: 'user has been created successfully', dataUser });
@@ -113,7 +122,6 @@ export async function editUserHandler(req: Request, res: Response) {
 
     const resuesta = await editUser(id, newUser);
 
-    console.log('Respuesta de la base de datos: ', resuesta)
 
     
     res.status(201).json({ message: 'user has been update successfully' });
@@ -136,11 +144,60 @@ export async function editUserImageHandler(req: Request, res: Response) {
     const userToken = req.headers['authorization']?.split(' ')[1] as string
     const {id} = verifyToken(userToken)
 
-    await editUserImage(id, newUserImage);
+    await editUserImage(id, newUserImage.user_img as string);
 
     res.status(201).json({ message: 'user has been update successfully' });
   } catch ({ message }: any) {
 
     res.status(400).json({ message })
+  }
+}
+
+
+export async function loginUserHandler(req: Request, res: Response) {
+
+  try {
+    const { email } = req.body;
+    const userData: UserProfile | null = await getUserByEmail(email);
+    
+    if(!userData){
+      return res.status(401).json({message:'Incorrect credentials'})
+    }
+
+    const {password} = userData
+    const inputPassword = req.body.password
+
+    const userAuthentication = await comparePassword(inputPassword, password)
+
+    if(!userAuthentication){
+      return res.status(401).json({message:'Incorrect credentials'})
+    }
+
+    const roleName = await getRoleById(userData.roleId) as string
+
+    const dataToken = {
+      id : userData.id,
+      email: userData.email,
+      role: roleName
+    } as PayloadType
+
+    const token =  signToken(dataToken)
+
+    const user = {
+      'user_name': userData.user_name,
+      'user_img': userData.user_img,
+      'phone': userData.phone,
+      'address': userData.address,
+      'gender' : userData.gender,
+      'birthday': userData.birthday,
+      'name_city': userData.city?.name_city,
+      'postal_code' : userData.city?.postal_code
+
+    }
+    res.status(200).json({ message: 'User is authorized', user , token});
+
+  } catch (error) {
+    console.error('Error in getUserHandler:', error);
+    res.status(500).json({ message: 'Internal server error' }); 
   }
 }

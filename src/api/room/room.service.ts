@@ -52,8 +52,14 @@ export async function getRoomById(id:string){
 
           }
         },
-      },
-    });
+        hotel:{
+          include:{
+          City:{ 
+            include: {country: true}}
+        }
+      }}
+      },    
+    );
     return room;
   } catch (error:any) {
     throw new Error(`Error fetching room by ID: ${error.message}`);
