@@ -54,7 +54,7 @@ export async function getRoomById(id:string){
         },
         hotel:{
           include:{
-          City:{ 
+          city:{ 
             include: {country: true}}
         }
       }}
