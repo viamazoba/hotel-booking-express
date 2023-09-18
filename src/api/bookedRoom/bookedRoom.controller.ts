@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { createBookedRoom } from "./bookedRoom.service";
 import { getbookedRoomById } from "./bookedRoom.service";
+import { getbookedRooms } from "./bookedRoom.service";
 import { AuthRequest } from "../../auth/auth.types";
 
 function errorHandler(exception: unknown) {
@@ -37,3 +38,15 @@ export async function getBookedRoomByIdController(req:Request, res: Response) {
       res.status(500).json({ message })
   }    
   }
+
+  export async function getbookedRoomsController(req:AuthRequest, res: Response) {
+    const { userId } = req.params;
+    try{
+        const userBookedRooms = await getbookedRooms(userId);
+        res.status(200).json(userBookedRooms);
+    } catch (error){
+        res.status(500).json({message: 'error al obtener las habitaciones del hotel'})
+    }
+}
+
+  
