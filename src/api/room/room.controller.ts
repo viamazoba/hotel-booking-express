@@ -7,7 +7,8 @@ import { updateRoom } from "./room.service";
 import { deleteRoom } from "./room.service";
 import { getAmenitiesRoomByRoomId } from "../amenities_room/amenities.service";
 import { createAmentiy_rooms } from "../amenities_room/amenities.service";
-   
+import { createInclusion_rooms } from "../inclusion_room/inclusion.service";
+import { getInclusionRoomByRoomId } from "../inclusion_room/inclusion.service";
 import { Room, CreateRoomData, editCreateRoomData } from "./room.types";
 import { AuthRequest } from "../../auth/auth.types";
 
@@ -28,11 +29,19 @@ export async function createRoomHandler(req: Request, res: Response){
           hotelId: req.query.hotelId as string,
         }; 
         const createdRoom: Room = await createRoom(roomData);
+        
         const amenities = req.body.amenities;
         const allAmenities = await getAmenitiesRoomByRoomId()
         const amenitiesIds = allAmenities.filter(amenity => amenities.includes(amenity.amenity_name)).map(amenity => amenity.id)
-        const arrayToSave = amenitiesIds.map(id => ({amenityId:id, roomId: createdRoom.id}))
-        await createAmentiy_rooms(arrayToSave)
+        const arrayToSaveAmenity = amenitiesIds.map(id => ({amenityId:id, roomId: createdRoom.id}))
+
+        const inclusions = req.body.inclusions;
+        const allInclusions = await getInclusionRoomByRoomId()
+        const inclusionsIds = allInclusions.filter(inclusion => inclusions.includes(inclusion.inclusion_name)).map(inclusion => inclusion.id)
+        const arrayToSaveInclusion = inclusionsIds.map(id => ({inclusionId:id, roomId: createdRoom.id}))
+
+        await createAmentiy_rooms(arrayToSaveAmenity)
+        await createInclusion_rooms(arrayToSaveInclusion)
         res.status(201).json({ message: 'Room has been created successfully',createdRoom});
     } catch (error: unknown) {
         const message = errorHandler(error);

@@ -3,7 +3,7 @@ import { CreateInclusionData } from "./inclusion.types";
 
 const prisma = new PrismaClient();
 
-export async function createInclusion_room(data: CreateInclusionData[]){
+export async function createInclusion_rooms(data: CreateInclusionData[]){
     try {
         const inclusion = await prisma.inclusion_room.createMany({
           data
@@ -49,6 +49,22 @@ export async function getInclusionRoomById(id:string){
     
   }
 }
+export async function getInclusionRoomByRoomId(roomId:string = '-1'){
+    try{
+      const inclusionsRoom = await prisma.inclusion.findMany({
+        include: {
+          Inclusion_room: {
+            where: {
+              roomId: roomId,
+            },
+          },
+        },
+      });
+      return inclusionsRoom
+    } catch (error: any){
+      throw new Error (`Error fetching rooms: ${error.message}`)
+    }
+  }
 
 export async function updateInclusionroom(id:string,data:CreateInclusionData) {
   try{
@@ -78,4 +94,16 @@ export async function getInclusionByName(inclusionName:string) {
     throw new Error(`Error getting inclusion: ${error.message}`)
     
   }
+}
+export async function deleteInclusion(roomId:string) {
+  try {
+    const deletedInclusion_room = await prisma.inclusion_room.deleteMany({
+      where: {roomId},
+    });
+    return deletedInclusion_room
+  } catch (error: any) {
+    throw new Error(`Error deleting hotel: ${error.message}`);
+    
+  }
+  
 }

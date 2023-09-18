@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createInclusion_room } from "./inclusion.service";
+import { createInclusion_rooms } from "./inclusion.service";
 import { getInclusion_room } from "./inclusion.service";
 import { getInclusionRoomById } from "./inclusion.service";
 import { updateInclusionroom } from "./inclusion.service";

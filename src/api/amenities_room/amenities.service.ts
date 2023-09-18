@@ -47,11 +47,23 @@ export async function getAmenitiesRoomByRoomId(roomId:string = '-1'){
 
   export async function createAmentiy_rooms(data: CreateAmenitiesData[]){
     try {
-        const inclusion = await prisma.amenity_room.createMany({
+        const amenity = await prisma.amenity_room.createMany({
           data
         });
-        return inclusion;
+        return amenity;
       } catch (error: any) {
         throw new Error(`Error creating amenities: ${error.message}`);
     }
+}
+export async function deleteAmenity(roomId:string) {
+  try {
+    const deletedAmenity_room = await prisma.amenity_room.deleteMany({
+      where: {roomId},
+    });
+    return deletedAmenity_room
+  } catch (error: any) {
+    throw new Error(`Error deleting hotel: ${error.message}`);
+    
+  }
+  
 }

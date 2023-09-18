@@ -50,37 +50,37 @@ export async function getHotels(filterCity: string){
 
 export async function getHotelById(id: string) {
   try {
-        const hotel = await prisma.hotel.findUnique({
-          where: { id },
+    const hotel = await prisma.hotel.findUnique({
+      where: { id },
+      include: {
+        rooms:{
           include: {
-            rooms:{
-              include: {
-                Amenity_room:{
+            Amenity_room:{
                   include: {amenity: true}
                 },
                 Inclusion_room:{
                   include: {inclusion: true}
                 },
-              }
-            },
-            city:{ 
-              include: {country: true}
+          }
+        },
+        city:{
+include: {country: true}
             },
             Service_labels_hotel: {
               include: {
                 label: {
-                  select: {
-                    service_label_name: true
+          select: {
+            service_label_name: true
                   }
                 }
-              }
-            }
-          },
-        });
-       
+          }
+        }
+      },
+    });
+    
     return hotel
-  
-  } catch (error: any) {
+    
+      } catch (error: any) {
     throw new Error(`Error fetching hotel by ID: ${error.message}`);
   }
 }
@@ -116,7 +116,16 @@ export async function getHotelsRooms(hotelId:string) {
     const hotel = await prisma.hotel.findUnique({
       where: {id: hotelId,},
       include: {
-        rooms: true,
+        rooms: {
+          include: {
+            Amenity_room:{
+                  include: {amenity: true}
+                },
+                Inclusion_room:{
+                  include: {inclusion: true}
+                },
+          }
+        },
       },
     });
     return hotel?.rooms;
