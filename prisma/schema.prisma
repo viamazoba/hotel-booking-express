@@ -1,4 +1,4 @@
-// This is your Prisma schema file,
+/// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -14,14 +14,19 @@ model Hotel {
   id                   String                @id @default(cuid())
   hotel_name           String                @unique
   hotel_img            String
+  imgs                 String[]
   description          String
   new_price            Int
   previous_price       Int?
+  labels               String?
   phone                String
-  hotel_type           Stars
+  hotel_rating         Stars?
+  check_in             DateTime              @default(now())
+  check_out            DateTime              @default(now())
   rooms                Room[]
-  City_hotel           City_hotel[]
   Service_labels_hotel Service_label_hotel[]
+  city                 City?                 @relation(fields: [cityId], references: [id])
+  cityId               String?
 }
 
 model Room {
@@ -33,13 +38,9 @@ model Room {
   new_price      Int
   previous_price Int?
   max_guests     Int?
-  check_in       DateTime
-  check_out      DateTime
   Inclusion_room Inclusion_room[]
   Amenity_room   Amenity_room[]
-  // Room_user      Room_user[]
-  user           User?            @relation(fields: [userId], references: [id])
-  userId         String?
+  Booked_room    Booked_room[]
 }
 
 model Inclusion_room {
@@ -52,50 +53,41 @@ model Inclusion_room {
 
 model Inclusion {
   id             String           @id @default(cuid())
-  inclusion_name String
+  inclusion_name String           @unique
   Inclusion_room Inclusion_room[]
 }
 
 model Amenity_room {
-  id             String  @id @default(cuid())
-  inclusion_name String  @unique
-  room           Room    @relation(fields: [roomId], references: [id])
-  roomId         String
-  amenity        Amenity @relation(fields: [amenityId], references: [id])
-  amenityId      String
+  id        String  @id @default(cuid())
+  room      Room    @relation(fields: [roomId], references: [id])
+  roomId    String
+  amenity   Amenity @relation(fields: [amenityId], references: [id])
+  amenityId String
 }
 
 model Amenity {
   id           String         @id @default(cuid())
-  amenity_name String
+  amenity_name String         @unique
   Amenity_room Amenity_room[]
 }
 
-// model Room_user {
-//   id     String @id @default(cuid())
-//   room   Room   @relation(fields: [roomId], references: [id])
-//   roomId String
-//   user   User   @relation(fields: [userId], references: [id])
-//   userId String
-// }
-
 model User {
-  id          String        @id @default(cuid())
-  user_name   String
-  user_img    String
-  email       String        @unique
-  phone       String
-  gender      Gender
-  birthday    String
-  address     String
-  Room        Room[]
-  // Room_user   Room_user[]
-  role        Role          @relation(fields: [roleId], references: [id])
-  roleId      String
-  Booked_room Booked_room[]
-  city        City          @relation(fields: [cityId], references: [id])
-  cityId      String
-  roomId      String
+  id            String        @id @default(cuid())
+  user_name     String?
+  user_img      String?
+  email         String        @unique
+  phone         String?
+  gender        Gender?
+  birthday      String?
+  address       String?
+  password      String
+  login_type    String?
+  role          Role          @relation(fields: [roleId], references: [id])
+  roleId        String
+  city          City?         @relation(fields: [cityId], references: [id])
+  cityId        String?
+  booked_roomId String?
+  Booked_room   Booked_room[]
 }
 
 model Role {
@@ -105,36 +97,26 @@ model Role {
 }
 
 model Booked_room {
-  id             String   @id @default(cuid())
-  room_name      String
-  room_img       String
-  guests         Int
-  new_price      Int
-  previous_price Int?
-  check_in       DateTime
-  check_out      DateTime
-  user           User     @relation(fields: [userId], references: [id])
-  userId         String
-}
-
-model City_hotel {
-  id      String @id @default(cuid())
-  hotel   Hotel  @relation(fields: [hotelId], references: [id])
-  hotelId String
-  city    City   @relation(fields: [cityId], references: [id])
-  cityId  String
+  id        String   @id @default(cuid())
+  guests    Int
+  check_in  DateTime
+  check_out DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
+  userId    String
+  roomId    String
 }
 
 model City {
-  id          String       @id @default(cuid())
+  id          String  @id @default(cuid())
   name_city   String
-  postal_code String       @unique
+  postal_code String  @unique
   altitude    Float
   latitude    Float
-  City_hotel  City_hotel[]
-  country     Country      @relation(fields: [countryId], references: [id])
+  country     Country @relation(fields: [countryId], references: [id])
   countryId   String
   User        User[]
+  Hotel       Hotel[]
 }
 
 model Country {
@@ -166,7 +148,7 @@ enum Stars {
 }
 
 enum Gender {
-  Man
-  Woman
-  Other
+  man
+  woman
+  other
 }
