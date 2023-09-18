@@ -35,3 +35,31 @@ export async function getbookedRoomById(id: string) {
     throw new Error(`Error fetching hotel by ID: ${error.message}`);
   }
 }
+
+export async function getbookedRooms(userId:string) {
+  try {
+    const Booked_rooms = await prisma.booked_room.findMany({
+      where: {userId: userId,},
+      include: {
+        room:{
+          include: {
+            hotel:{include:
+              {city:
+                {include:
+                  {country: true}
+                }}},
+            Amenity_room:{
+              include: {amenity: true}
+            },
+            Inclusion_room:{
+              include: {inclusion: true}
+            },
+          }
+        },
+      },
+    });
+    return Booked_rooms;
+  } catch (error) {
+    throw error;
+  }
+}
