@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { CreateRoomData, editCreateRoomData } from "./room.types";
+import { deleteAmenity } from "../amenities_room/amenities.service";
+import { deleteInclusion } from "../inclusion_room/inclusion.service";
 
 const prisma = new PrismaClient();
 
@@ -9,6 +11,7 @@ export async function createRoom(data: CreateRoomData){
           data,
           include:{
             Amenity_room: true,
+            Inclusion_room: true,
           },
         });
         return room;
@@ -81,6 +84,8 @@ export async function updateRoom(id:string,data:editCreateRoomData) {
 
 export async function deleteRoom(id:string) {
   try {
+    const deleteManyInclusions = await deleteInclusion(id)
+    const deleteManyAmenities = await deleteAmenity(id)
     const deletedRoom = await prisma.room.delete({
       where: {id},
     });
